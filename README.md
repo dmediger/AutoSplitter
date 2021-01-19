@@ -1,2 +1,2 @@
 # AutoSplitter
-Autosplitters/Load Removers for Livesplit reading specific memory from RAM
+Autosplitters/Load Removers for Livesplit reading values at specific memory adresses.
