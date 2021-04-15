@@ -1,27 +1,25 @@
 /* 
  * CHILDREN OF MORTA Any%/IL autosplitter by 4kiZeta
  *
- * This asl contains autosplitters for both Any% and individual level ("IL") runs.
+ * This asl contains autosplitters for both Any% and Family Trials runs.
  * Set up separate livesplit layouts for both categories and choose settings accordingly.
  * 
  * For Any% runs make sure to set livesplit timers to REALTIME
- * For "IL" runs make sure to set livesplit timers to GAMETIME
+ * For Family Trials runs make sure to set livesplit timers to GAMETIME
  * 
- * IL time synchronizes with the gametime read from corresponding memory used by the
+ * In case of Family Trials, time synchronizes with the gametime read from corresponding memory used by the
  * underlying unity engine as demanded by the current category ruleset.
  * 
- * Tested for win x64 systems on game version 1.1.70.2
+ * Tested for win x64 systems on game version 1.2.55
  */
 
 state("ChildrenOfMorta")
 {
-    bool pProfileLoaded:  "UnityPlayer.dll",    0x15F4040, 0x0, 0xD8, 0x160, 0xD0, 0x78, 0x48;
-    bool pIsInFloor:      "UnityPlayer.dll",    0x15F4040, 0x0, 0x138, 0x108, 0x160, 0xA8, 0xA0, 0x90;
-    int  floorsWon:       "mono-2.0-bdwgc.dll", 0x492DC8,  0x100, 0xE18, 0x140, 0x80, 0xF8;
-    int  cameraState:     "UnityPlayer.dll",    0x1646F10, 0x0, 0x10, 0x30, 0x38, 0x28, 0x28, 0xEC;
-    bool bossHpBarActive: "mono-2.0-bdwgc.dll", 0x523840,  0x0, 0x108, 0x2A8, 0x0, 0x160, 0x258, 0x50;
+    bool pProfileLoaded:  "UnityPlayer.dll",    0x15F4040,  0x0,  0xD8, 0x160,  0xD0,  0x78,  0x48;
+    int  passedFloors:    "UnityPlayer.dll",    0x16A8100, 0x50,  0xD0,  0x30,   0x8, 0x118,  0x48, 0x130;
+    bool bossHpBarActive: "mono-2.0-bdwgc.dll",  0x523850,  0x0, 0x108, 0x418,   0x0, 0x168, 0x258,  0x50;
 
-    int  pDungeon:        "UnityPlayer.dll",    0x1632730, 0x40, 0x740, 0x98, 0x1A8, 0x2E8, 0x28, 0x74;
+    int  pDungeon:        "UnityPlayer.dll",    0x15F4040, 0x0, 0xD8, 0x160, 0x98, 0x48, 0xD0, 0x74;
         // enum pDungeon: Invalid (House)  = -2
         //                Tutorial         = -1
         //                Silk Caverns     = 0
@@ -34,9 +32,7 @@ state("ChildrenOfMorta")
         //                Industrial       = 15
         //                Area 30          = 16
         //                Ou (Temple)      = 20
-
-    float runStartTime:   "mono-2.0-bdwgc.dll", 0x492DC8, 0x100, 0xE18, 0x140, 0x80, 0xE4;
-    float pTime:          "mono-2.0-bdwgc.dll", 0x4A23F0, 0x210, 0x1D0;
+        //                Endless          = 30
 
     int runEndCode:       "mono-2.0-bdwgc.dll", 0x492DE0, 0xA0, 0x1D0, 0x0, 0x60, 0x10, 0x110;
         // RunEndReason:  Death/Default = 0
@@ -44,9 +40,20 @@ state("ChildrenOfMorta")
         //                ReturnByMenu  = 2
         //                ReturnToTitle = 3
 
+    int globalGameMode:   "UnityPlayer.dll", 0x16A8100, 0x50, 0xD0, 0x30, 0x8, 0x118, 0x16C;
+        // Gamemode:      Invalid = 0
+        //                Story   = 1
+        //                Trials  = 2
+
     int localGamemode:    "mono-2.0-bdwgc.dll", 0x492DC8, 0x100, 0xC00, 0x418, 0x140, 0xBC;
         // localGamemode: NG     = 1
         //                NGPlus = 2
+
+    //regarding Family Trials mode
+    float runStartTime:   "UnityPlayer.dll",    0x16A8100,  0x50,  0xD0,  0x30,   0x8, 0x118,  0x48, 0x114;
+    float pTime:          "mono-2.0-bdwgc.dll",  0x523810, 0x150, 0x410, 0x260,  0x44;
+    bool  pIsInTrialsRun: "UnityPlayer.dll",    0x16A8100,  0x50,  0xD0,  0x30,   0x8, 0x118, 0x159;
+    int   pTrialsEndCode: "UnityPlayer.dll",    0x1634700,   0x8,  0x28, 0x288,  0xD0,  0x90,  0x2C;
 }
 
 startup
@@ -65,16 +72,32 @@ startup
     settings.Add("split_area30", true, "Beating Area 30", "split_any");
     settings.Add("split_ou", true, "Beating Ou (Final Boss)", "split_any");
     
-    //IL mode
-    settings.Add("split_IL", false, "Run individual levels (needs GAMETIME setting):");
-    settings.Add("split_floors", false, "Split on floor transition", "split_IL");
+    //Family Trials mode
+    settings.Add("split_trials",  false, "Run Family Trials (needs GAMETIME setting):");
+    settings.Add("split_floor1",  false, "After Floor 1", "split_trials");
+    settings.Add("split_floor2",  false, "After Floor 2", "split_trials");
+    settings.Add("split_floor3",  false, "After Floor 3", "split_trials");
+    settings.Add("split_floor4",  false, "After Floor 4 (Shop)", "split_trials");
+    settings.Add("split_floor5",  false, "After Floor 5", "split_trials");
+    settings.Add("split_floor6",  false, "After Floor 6", "split_trials");
+    settings.Add("split_floor7",  false, "After Floor 7 (Shop)", "split_trials");
+    settings.Add("split_floor8",  false, "After Floor 8 (Boss 1)", "split_trials");
+    settings.Add("split_floor9",  false, "After Floor 9", "split_trials");
+    settings.Add("split_floor10", false, "After Floor 10", "split_trials");
+    settings.Add("split_floor11", false, "After Floor 11", "split_trials");
+    settings.Add("split_floor12", false, "After Floor 12 (Shop)", "split_trials");
+    settings.Add("split_floor13", false, "After Floor 13 (Boss 2)", "split_trials");
+    settings.Add("split_floor14", false, "After Floor 14", "split_trials");
+    settings.Add("split_floor15", false, "After Floor 15", "split_trials");
+    settings.Add("split_floor16", false, "After Floor 16 (Shop)", "split_trials");
+    settings.Add("split_floor17", false, "After Floor 17 (Aziz)", "split_trials");
+    settings.Add("split_floor18", false, "After Floor 18 (Ou)", "split_trials");
 }
 
 init
 {
     //(Re-)Initializing..
     vars.splitCounter_Any = 0;
-    vars.splitCdtn_IL = false;
     vars.ouBarCounter = 0;
     vars.ouIsDead = false;
     vars.playDuration = TimeSpan.FromSeconds((double)(0));
@@ -93,12 +116,8 @@ init
 
 update
 {
-    if (settings["split_IL"]) {
+    if (settings["split_trials"]) {
         vars.playDuration = TimeSpan.FromSeconds((double)(new decimal(current.pTime - current.runStartTime)));
- 
-        if (current.floorsWon > old.floorsWon) {   //IL split cdtn -> floor is won (counts for last floor as well)
-            vars.splitCdtn_IL = true;
-        }
     }
     else
     if (settings["split_any"] && current.pDungeon == 20){
@@ -110,7 +129,7 @@ update
         }
         return true;
     }
-    else if (settings["split_any"] && old.cameraState < current.cameraState ){ //Reset ouBarCounter at house-to-den transition
+    else if (settings["split_any"] && old.pDungeon == 20 && current.pDungeon != 20 ){ //Reset ouBarCounter
         vars.ouBarCounter = 0;
         vars.ouIsDead = false;
         return true;
@@ -135,10 +154,9 @@ start
 
         return true;
     }
-    else if (settings["split_IL"]){
-        vars.splitCdtn_IL = false;
-        return (old.runStartTime != current.runStartTime);
-        }
+    else if (settings["split_trials"]){
+        return (current.pIsInTrialsRun);
+    }
 }
 
 split
@@ -150,58 +168,90 @@ split
                 return true;}
         else        
         if(vars.splitCounter_Any == 1 && settings["split_silk"] && 
-           old.pDungeon == 0 && current.floorsWon == 3) {
+           old.pDungeon == 0 && current.passedFloors == 3) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntTrenches && settings["split_trenches"] && 
-           old.pDungeon == 1 && current.floorsWon == 4 ) {
+           old.pDungeon == 1 && current.passedFloors == 4 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntAnai && settings["split_anai"] && 
-           old.pDungeon == 2 && current.floorsWon == 4 ) {
+           old.pDungeon == 2 && current.passedFloors == 4 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else        
         if(vars.splitCounter_Any == vars.setCntCity && settings["split_city"] && 
-           old.pDungeon == 6 && current.floorsWon == 3 ) {
+           old.pDungeon == 6 && current.passedFloors == 3 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntForest && settings["split_forest"] && 
-           old.pDungeon == 10 && current.pDungeon != 10 ) {
+           old.passedFloors == 0 && current.passedFloors == 1 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntZiggurat && settings["split_ziggurat"] && 
-           old.pDungeon == 7 && current.floorsWon == 5 ) {
+           old.pDungeon == 7 && current.passedFloors == 5 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntRuins && settings["split_ruins"] && 
-           old.pDungeon == 5 && current.floorsWon == 3 ) {
+           old.pDungeon == 5 && current.passedFloors == 3 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntIndustrial && settings["split_factory"] && 
-           old.pDungeon == 15 && current.floorsWon == 4 ) {
+           old.pDungeon == 15 && current.passedFloors == 4 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntArea && settings["split_area30"] && 
-           old.pDungeon == 16 && current.floorsWon == 4 ) {
+           old.pDungeon == 16 && current.passedFloors == 4 ) {
                 vars.splitCounter_Any++;
                 return true;}
         else
         if(vars.splitCounter_Any == vars.setCntOu && settings["split_ou"] && vars.ouIsDead ) {
                 return true;}
     }
-    else
-    if(   settings["split_IL"] && vars.splitCdtn_IL && !old.pIsInFloor && 
-        ((current.pIsInFloor && settings["split_floors"]) || ( current.pDungeon == -2 && old.runEndCode == 0 && current.runEndCode == 1 )) ){
-            vars.splitCdtn_IL = false;
-            return true;
+    else //regarding Family Trials mode
+    if( settings["split_trials"] && old.passedFloors == current.passedFloors - 1 ){
+        if ( settings["split_floor1"] && old.passedFloors == 0) return true;
+        else 
+        if ( settings["split_floor2"] && old.passedFloors == 1) return true;
+        else
+        if ( settings["split_floor3"] && old.passedFloors == 2) return true;
+        else 
+        if ( settings["split_floor4"] && old.passedFloors == 3) return true;
+        else
+        if ( settings["split_floor5"] && old.passedFloors == 4) return true;
+        else 
+        if ( settings["split_floor6"] && old.passedFloors == 5) return true;
+        else
+        if ( settings["split_floor7"] && old.passedFloors == 6) return true;
+        else 
+        if ( settings["split_floor8"] && old.passedFloors == 7) return true;
+        else
+        if ( settings["split_floor9"] && old.passedFloors == 8) return true;
+        else 
+        if ( settings["split_floor10"] && old.passedFloors == 9) return true;
+        else
+        if ( settings["split_floor11"] && old.passedFloors == 10) return true;
+        else 
+        if ( settings["split_floor12"] && old.passedFloors == 11) return true;
+        else
+        if ( settings["split_floor13"] && old.passedFloors == 12) return true;
+        else 
+        if ( settings["split_floor14"] && old.passedFloors == 13) return true;
+        else
+        if ( settings["split_floor15"] && old.passedFloors == 14) return true;
+        else 
+        if ( settings["split_floor16"] && old.passedFloors == 15) return true;
+        else
+        if ( settings["split_floor17"] && old.passedFloors == 16) return true;
+        else 
+        if ( settings["split_floor18"] && old.passedFloors == 17) return true;
     }
 }
 
@@ -212,25 +262,18 @@ reset
         return true;
     }
     else
-    if ( (settings["split_IL"] && (current.pDungeon == -2 && current.runEndCode == 2) || !current.pProfileLoaded) ){
-        vars.splitCdtn_IL = false;
+    if ( settings["split_trials"] && !current.pIsInTrialsRun && current.pTrialsEndCode != 1) {
         return true;
     }
 }
 
-isLoading
-{
-}
-
 gameTime
 {
-    return vars.playDuration; // timespan for IL runs
+    return vars.playDuration;
 }
 
 exit
 {
-    vars.splitCdtn_IL = false;
-    vars.reset_IL = false;
     vars.ouBarCounter = 0;
     vars.ouIsDead = false;
 }
