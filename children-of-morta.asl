@@ -1,5 +1,5 @@
 /* 
- * CHILDREN OF MORTA Any%/IL autosplitter by 4kiZeta
+ * CHILDREN OF MORTA Any%/Family Trials autosplitter by 4kiZeta
  *
  * This asl contains autosplitters for both Any% and Family Trials runs.
  * Set up separate livesplit layouts for both categories and choose settings accordingly.
@@ -11,12 +11,14 @@
  * underlying unity engine as demanded by the current category ruleset.
  * 
  * Tested for win x64 systems on game version 1.2.55
+ *
+ * Thanks to the Discord Community (esp. Dragonxiv, mordeera and 5thOrigin) for testing!
  */
 
 state("ChildrenOfMorta")
 {
     bool pProfileLoaded:  "UnityPlayer.dll",    0x15F4040,  0x0,  0xD8, 0x160,  0xD0,  0x78,  0x48;
-    int  passedFloors:    "UnityPlayer.dll",    0x16A8100, 0x50,  0xD0,  0x30,   0x8, 0x118,  0x48, 0x130;
+    int  passedFloors:    "UnityPlayer.dll",    0x15F8C00, 0xC88, 0xF8,  0x50,  0x78,  0x20,  0x48, 0x130;
     bool bossHpBarActive: "mono-2.0-bdwgc.dll",  0x523850,  0x0, 0x108, 0x418,   0x0, 0x168, 0x258,  0x50;
 
     int  pDungeon:        "UnityPlayer.dll",    0x15F4040, 0x0, 0xD8, 0x160, 0x98, 0x48, 0xD0, 0x74;
@@ -50,9 +52,9 @@ state("ChildrenOfMorta")
         //                NGPlus = 2
 
     //regarding Family Trials mode
-    float runStartTime:   "UnityPlayer.dll",    0x16A8100,  0x50,  0xD0,  0x30,   0x8, 0x118,  0x48, 0x114;
+    float runStartTime:   "UnityPlayer.dll",    0x15F8C00, 0xC88,  0xF8,  0x50,   0x78, 0x20,  0x48, 0x114;
     float pTime:          "mono-2.0-bdwgc.dll",  0x523810, 0x150, 0x410, 0x260,  0x44;
-    bool  pIsInTrialsRun: "UnityPlayer.dll",    0x16A8100,  0x50,  0xD0,  0x30,   0x8, 0x118, 0x159;
+    bool  pIsInTrialsRun: "UnityPlayer.dll",    0x15F8C00, 0xC88,  0xF8,  0x50,  0x78,  0x20, 0x159;
     int   pTrialsEndCode: "UnityPlayer.dll",    0x1634700,   0x8,  0x28, 0x288,  0xD0,  0x90,  0x2C;
 }
 
@@ -116,6 +118,14 @@ init
 
 update
 {
+    //Dirty Debug
+    if(current.pIsInTrialsRun) print("Is in run!");
+    else if (!current.pIsInTrialsRun) print("Apparently not in run!!");
+    else print("Invalid bool pIsInTrialsRun");
+    print("passed floors: "+current.passedFloors);
+    print("Run start time: "+current.runStartTime);
+    print("Time: "+current.pTime);
+
     if (settings["split_trials"]) {
         vars.playDuration = TimeSpan.FromSeconds((double)(new decimal(current.pTime - current.runStartTime)));
     }
