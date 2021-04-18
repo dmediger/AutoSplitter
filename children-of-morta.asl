@@ -11,8 +11,6 @@
  * underlying unity engine as demanded by the current category ruleset.
  * 
  * Tested for win x64 systems on game version 1.2.55
- *
- * Thanks to the Discord Community (esp. Dragonxiv, mordeera and 5thOrigin) for testing!
  */
 
 state("ChildrenOfMorta")
@@ -52,10 +50,10 @@ state("ChildrenOfMorta")
         //                NGPlus = 2
 
     //regarding Family Trials mode
-    float runStartTime:   "UnityPlayer.dll",    0x15F8C00, 0xC88,  0xF8,  0x50,   0x78, 0x20,  0x48, 0x114;
-    float pTime:          "mono-2.0-bdwgc.dll",  0x523810, 0x150, 0x410, 0x260,  0x44;
-    bool  pIsInTrialsRun: "UnityPlayer.dll",    0x15F8C00, 0xC88,  0xF8,  0x50,  0x78,  0x20, 0x159;
-    int   pTrialsEndCode: "UnityPlayer.dll",    0x1634700,   0x8,  0x28, 0x288,  0xD0,  0x90,  0x2C;
+    float runStartTime:   "UnityPlayer.dll",    0x15F8C00, 0xC88,  0xF8,  0x50,  0x78, 0x20,  0x48, 0x114;
+    float pTime:          "mono-2.0-bdwgc.dll",  0x523800,  0xD0, 0x170, 0x190,  0x44;
+    bool  pIsInTrialsRun: "UnityPlayer.dll",    0x15F8C00, 0xC88,  0xF8,  0x50,  0x78, 0x20, 0x159;
+    int   pTrialsEndCode: "UnityPlayer.dll",    0x1634700,   0x8,  0x28, 0x288,  0xD0, 0x90,  0x2C;
 }
 
 startup
